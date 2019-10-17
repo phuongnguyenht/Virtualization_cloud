@@ -1,0 +1,29 @@
+
+* * * * * --  Move máy ảo VM từ ESXi này sang ESXi khác thông qua ssh -- * * * * *  
+
+https://pubs.vmware.com/vsphere-50/index.jsp?topic=%2Fcom.vmware.vcli.migration.doc_50%2Fcos_upgrade_technote.1.7.html
+
+get Ip 
+esxcli network ip interface ipv4 get vmk0
+
+https://www.tunnelsup.com/networking-commands-for-the-vmware-esxi-host-command-line/
+
+
+Connect with SSH to the source ESXi host. Check if you have shutdown the VM you are going to copy!
+
+Enable SSH client (CLI method). Check if SSH client service is enabled. Will return ‘False’ if ‘Disabled’.
+
+esxcli network firewall ruleset list --ruleset-id sshClient
+Then enable SSH client.
+esxcli network firewall ruleset set --ruleset-id sshClient --enabled=true
+
+Copying the VM to Destination: 10.84.5.175
+Go to the to the VM directory:
+
+cd /vmfs/volumes/datastore1/
+scp -v -c aes128-ctr -r 20190521_App\ 02_Campain_5.140_HocNV/ root@10.144.40.120:/vmfs/volumes/datastore1/
+
+scp -v -c aes128-ctr -r 20190521_App\ 01_Campain_5.139_HocNV/ root@10.98.0.120:/vmfs/volumes/datastore1/
+
+scp -r 20190521_App\ 01_Campain_5.139_HocNV/ root@10.98.0.120:/vmfs/volumes/datastore1/
+./bin/rsync -avzh root@10.98.0.120:/vmfs/volumes/datastore1/20190521_App01 /vmfs/volumes/datastore1/20190521_App01
